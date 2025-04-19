@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admission Portal{% endblock %}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">
+                <i class="fas fa-graduation-cap me-2"></i>
+                Admission Portal
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == url_for('home') %}active{% endif %}" href="{{ url_for('home') }}">
+                            <i class="fas fa-home me-1"></i> Home
+                        </a>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == url_for('dashboard') %}active{% endif %}" href="{{ url_for('dashboard') }}">
+                            <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == url_for('select_application') %}active{% endif %}" href="{{ url_for('select_application') }}">
+                            <i class="fas fa-file-alt me-1"></i> New Application
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == url_for('check_status') %}active{% endif %}" href="{{ url_for('check_status') }}">
+                            <i class="fas fa-search me-1"></i> Check Status
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i> {{ current_user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard') }}">
+                                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i> Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == url_for('login') %}active{% endif %}" href="{{ url_for('login') }}">
+                            <i class="fas fa-sign-in-alt me-1"></i> Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == url_for('register') %}active{% endif %}" href="{{ url_for('register') }}">
+                            <i class="fas fa-user-plus me-1"></i> Register
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        <i class="fas {% if category == 'success' %}fa-check-circle{% elif category == 'danger' %}fa-exclamation-circle{% elif category == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <main class="container my-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-white">
+        <div class="container p-4">
+            <section class="mb-4">
+                <a class="btn btn-outline-light btn-floating m-1" href="#" role="button">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a class="btn btn-outline-light btn-floating m-1" href="#" role="button">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a class="btn btn-outline-light btn-floating m-1" href="#" role="button">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a class="btn btn-outline-light btn-floating m-1" href="#" role="button">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+            </section>
+            
+            <section>
+                <p>
+                    The Admission Portal provides a seamless admission application experience for prospective students.
+                    Apply online, track your application status, and manage your admission process all in one place.
+                </p>
+            </section>
+            
+            <section class="mt-3">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                        <h5 class="text-uppercase">Contact</h5>
+                        <ul class="list-unstyled mb-0">
+                            <li>
+                                <a href="#" class="text-white">
+                                    <i class="fas fa-map-marker-alt me-2"></i> 123 Education St, Knowledge City
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="text-white">
+                                    <i class="fas fa-phone me-2"></i> +1 (123) 456-7890
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="text-white">
+                                    <i class="fas fa-envelope me-2"></i> admissions@example.edu
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                        <h5 class="text-uppercase">Links</h5>
+                        <ul class="list-unstyled mb-0">
+                            <li><a href="{{ url_for('home') }}" class="text-white">Home</a></li>
+                            <li><a href="{{ url_for('check_status') }}" class="text-white">Check Status</a></li>
+                            <li><a href="#" class="text-white">About Us</a></li>
+                            <li><a href="#" class="text-white">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col-lg-4 col-md-12 mb-4 mb-md-0">
+                        <h5 class="text-uppercase">Important Dates</h5>
+                        <ul class="list-unstyled mb-0">
+                            <li>
+                                <span class="fw-bold">Application Opens:</span> January 15, 2023
+                            </li>
+                            <li>
+                                <span class="fw-bold">Application Deadline:</span> March 31, 2023
+                            </li>
+                            <li>
+                                <span class="fw-bold">Result Declaration:</span> May 15, 2023
+                            </li>
+                            <li>
+                                <span class="fw-bold">Admission Confirmation:</span> June 15, 2023
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            © 2023 Admission Portal. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/form-validation.js') }}"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

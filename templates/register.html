@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Admission Portal{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-user-plus me-2"></i> Create an Account</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="" class="needs-validation" novalidate>
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            <label for="username" class="form-label">{{ form.username.label }}</label>
+                            {{ form.username(class="form-control", id="username", placeholder="Choose a username") }}
+                            <div class="form-text">Username must be 4-25 characters long and can contain letters, numbers, and underscores.</div>
+                            {% if form.username.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.username.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">{{ form.email.label }}</label>
+                            {{ form.email(class="form-control", id="email", placeholder="Enter your email address") }}
+                            <div class="form-text">We'll never share your email with anyone else.</div>
+                            {% if form.email.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.email.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">{{ form.password.label }}</label>
+                            <div class="input-group">
+                                {{ form.password(class="form-control", id="password", placeholder="Create a password") }}
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword" onclick="togglePasswordVisibility('password', 'passwordIcon')">
+                                    <i id="passwordIcon" class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="mt-2">
+                                <label for="password-strength-meter" class="form-label">Password Strength:</label>
+                                <meter id="password-strength-meter" min="0" max="4" low="2" high="3" optimum="4" value="0" class="w-100"></meter>
+                                <p id="password-strength-text" class="form-text"></p>
+                            </div>
+                            <div class="form-text">Password must be at least 8 characters long and include uppercase, lowercase, numbers, and special characters.</div>
+                            {% if form.password.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.password.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="confirm_password" class="form-label">{{ form.confirm_password.label }}</label>
+                            <div class="input-group">
+                                {{ form.confirm_password(class="form-control", id="confirm_password", placeholder="Confirm your password") }}
+                                <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword" onclick="togglePasswordVisibility('confirm_password', 'confirmPasswordIcon')">
+                                    <i id="confirmPasswordIcon" class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            {% if form.confirm_password.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.confirm_password.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="agreeTerms" required>
+                            <label class="form-check-label" for="agreeTerms">I agree to the <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a></label>
+                            <div class="invalid-feedback">You must agree before submitting.</div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <div class="small">Already have an account? <a href="{{ url_for('login') }}">Login here</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const passwordInput = document.getElementById('password');
+    const strengthMeter = document.getElementById('password-strength-meter');
+    const strengthText = document.getElementById('password-strength-text');
+    
+    if (passwordInput && strengthMeter && strengthText) {
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+            
+            if (password.length >= 8) strength++;
+            if (/[A-Z]/.test(password) && /[a-z]/.test(password)) strength++;
+            if (/\d/.test(password)) strength++;
+            if (/\W/.test(password)) strength++;
+            
+            // Update the strength meter
+            strengthMeter.value = strength;
+            
+            // Update the strength text
+            const strengthLabels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+            strengthText.textContent = strengthLabels[strength] || '';
+            
+            // Update text color
+            strengthText.className = 'form-text ' + 
+                (strength === 1 ? 'text-danger' : 
+                 strength === 2 ? 'text-warning' : 
+                 strength === 3 ? 'text-info' : 
+                 strength === 4 ? 'text-success' : '');
+        });
+    }
+});
+</script>
+{% endblock %}

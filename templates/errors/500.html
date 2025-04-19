@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error - Admission Portal{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm text-center py-5">
+                <div class="card-body">
+                    <div class="mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                    </div>
+                    <h1 class="display-4 fw-bold mb-4">500</h1>
+                    <h2 class="mb-4">Internal Server Error</h2>
+                    <p class="lead mb-5">Sorry, something went wrong on our end. We're working to fix the issue.</p>
+                    
+                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                        <a href="{{ url_for('home') }}" class="btn btn-primary btn-lg px-4 me-sm-3">
+                            <i class="fas fa-home me-2"></i> Go Home
+                        </a>
+                        <a href="javascript:history.back()" class="btn btn-outline-secondary btn-lg px-4">
+                            <i class="fas fa-arrow-left me-2"></i> Go Back
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4 shadow-sm">
+                <div class="card-body">
+                    <h4 class="mb-3">What can you do?</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-redo-alt me-2 text-primary"></i> Refresh the page and try again
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-clock me-2 text-primary"></i> Wait a moment and then retry your action
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-sign-out-alt me-2 text-primary"></i> Try logging out and logging back in
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-cookie-bite me-2 text-primary"></i> Clear your browser cookies and cache
+                        </li>
+                        <li>
+                            <i class="fas fa-envelope me-2 text-primary"></i> If the problem persists, please contact our support at <a href="mailto:support@example.edu">support@example.edu</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card mt-4 shadow-sm">
+                <div class="card-body text-center">
+                    <h5>Quick Navigation</h5>
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <a href="{{ url_for('home') }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-home me-2"></i> Home
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{{ url_for('check_status') }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-search me-2"></i> Check Status
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

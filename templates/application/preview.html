@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+
+{% block title %}Application Preview - Admission Portal{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Application Progress -->
+            <div class="card mb-4 shadow-sm {% if print_view %}d-print-none{% endif %}">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Application Progress</h5>
+                    <div class="progress" style="height: 20px;">
+                        <div class="progress-bar" role="progressbar" style="width: 90%;" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">90%</div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <span class="badge bg-primary">Step 4 of 4: Preview & Submit</span>
+                        <span>Application #: {{ application.application_number }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Preview Card -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white {% if print_view %}d-print-none{% endif %}">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0"><i class="fas fa-file-alt me-2"></i> Application Preview</h4>
+                        {% if not print_view %}
+                        <div>
+                            <button class="btn btn-light btn-sm btn-print">
+                                <i class="fas fa-print me-1"></i> Print
+                            </button>
+                            <a href="{{ url_for('download_application', application_id=application.id) }}" class="btn btn-light btn-sm">
+                                <i class="fas fa-download me-1"></i> Download PDF
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Print Header (only visible when printing) -->
+                {% if print_view %}
+                <div class="card-header text-center d-none d-print-block">
+                    <div class="py-3">
+                        <h2 class="mb-1">Admission Application Form</h2>
+                        <h4 class="text-muted mb-3">Application #: {{ application.application_number }}</h4>
+                        <div class="small text-muted">
+                            {% if application.submitted_at %}
+                                Submitted on: {{ application.submitted_at.strftime('%B %d, %Y at %I:%M %p') }}
+                            {% else %}
+                                Generated on: {{ application.updated_at.strftime('%B %d, %Y at %I:%M %p') }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="card-body">
+                    <div class="application-preview">
+                        <!-- Application Type and Status -->
+                        <div class="row mb-4">
+                            <div class="col-md-8">
+                                <h5>Application Details</h5>
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <th class="bg-light" style="width: 40%">Application Number</th>
+                                        <td>{{ application.application_number }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Program Type</th>
+                                        <td>{{ application.application_type.replace('_', ' ').title() }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Status</th>
+                                        <td>
+                                            <span class="badge status-badge status-{{ application.status.value }}">
+                                                {{ application.status.value.replace('_', ' ').title() }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% if application.submitted_at %}
+                                    <tr>
+                                        <th class="bg-light">Submitted On</th>
+                                        <td>{{ application.submitted_at.strftime('%B %d, %Y at %I:%M %p') }}</td>
+                                    </tr>
+                                    {% endif %}
+                                </table>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                {% if documents and documents.get('photo') %}
+                                <div class="mb-2">
+                                    <img src="{{ url_for('static', filename='uploads/' + documents.get('photo').filename) }}" alt="Applicant Photo" style="max-width: 150px; max-height: 200px;" class="img-thumbnail">
+                                </div>
+                                {% endif %}
+                                {% if documents and documents.get('signature') %}
+                                <div>
+                                    <img src="{{ url_for('static', filename='uploads/' + documents.get('signature').filename) }}" alt="Applicant Signature" style="max-width: 150px; max-height: 60px;" class="img-thumbnail">
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Personal Information -->
+                        <div class="mb-4">
+                            <h5>Personal Information</h5>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th class="bg-light" style="width: 25%">Full Name</th>
+                                    <td>{{ application.first_name }} {{ application.last_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Date of Birth</th>
+                                    <td>{{ application.date_of_birth.strftime('%B %d, %Y') }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Gender</th>
+                                    <td>{{ application.gender.title() }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Phone Number</th>
+                                    <td>{{ application.phone }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Email</th>
+                                    <td>{{ current_user.email }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Address</th>
+                                    <td>{{ application.address }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">City</th>
+                                    <td>{{ application.city }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">State</th>
+                                    <td>{{ application.state }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">PIN Code</th>
+                                    <td>{{ application.pincode }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <!-- Educational Information -->
+                        <div class="mb-4">
+                            <h5>Educational Information</h5>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th class="bg-light" style="width: 25%">Highest Qualification</th>
+                                    <td>{{ application.highest_qualification }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Board/University</th>
+                                    <td>{{ application.board_university }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Year of Passing</th>
+                                    <td>{{ application.year_of_passing }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Percentage/CGPA</th>
+                                    <td>{{ application.percentage_marks }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <!-- Documents Uploaded -->
+                        <div class="mb-4">
+                            <h5>Documents Uploaded</h5>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="bg-light">Document Type</th>
+                                        <th class="bg-light">File Name</th>
+                                        <th class="bg-light">Uploaded On</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if documents %}
+                                        {% for doc_type, doc in documents.items() %}
+                                        <tr>
+                                            <td>{{ doc_type.replace('_', ' ').title() }}</td>
+                                            <td>{{ doc.filename }}</td>
+                                            <td>{{ doc.uploaded_at.strftime('%Y-%m-%d') }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="3" class="text-center">No documents uploaded</td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Declaration (for printing) -->
+                        {% if print_view %}
+                        <div class="mt-5 mb-4">
+                            <h5>Declaration</h5>
+                            <p>I hereby declare that all the information provided in this application is true and correct to the best of my knowledge. I understand that providing false information may result in cancellation of my application or admission. I agree to abide by all the rules and regulations of the institution.</p>
+                            
+                            <div class="row mt-5">
+                                <div class="col-md-6">
+                                    <p>Date: _____________________</p>
+                                </div>
+                                <div class="col-md-6 text-end">
+                                    <p>Signature of Applicant: _____________________</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Action Buttons (not for print) -->
+                        {% if not print_view and application.status.value == 'draft' %}
+                        <div class="alert alert-warning mt-4 {% if print_view %}d-print-none{% endif %}">
+                            <i class="fas fa-exclamation-triangle me-2"></i> Please review all information carefully before submission. You will not be able to edit your application after submission.
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4 {% if print_view %}d-print-none{% endif %}">
+                            <a href="{{ url_for('documents_upload', application_id=application.id) }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i> Previous: Document Upload
+                            </a>
+                            <a href="{{ url_for('submit_application', application_id=application.id) }}" class="btn btn-success">
+                                <i class="fas fa-check-circle me-2"></i> Proceed to Submit
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Application Process Overview (not for print) -->
+            {% if not print_view %}
+            <div class="card mt-4 shadow-sm d-print-none">
+                <div class="card-header bg-light">
+                    <h4 class="mb-0"><i class="fas fa-map-signs me-2"></i> Application Process</h4>
+                </div>
+                <div class="card-body">
+                    <div class="progress-tracker">
+                        <div class="progress-step completed" id="step-select">
+                            <div class="progress-step-label">Select Application Type</div>
+                            <p class="text-muted small">{{ application.application_type.replace('_', ' ').title() }}</p>
+                        </div>
+                        <div class="progress-step completed" id="step-personal">
+                            <div class="progress-step-label">Personal Information</div>
+                            <p class="text-muted small">Completed</p>
+                        </div>
+                        <div class="progress-step completed" id="step-education">
+                            <div class="progress-step-label">Educational Details</div>
+                            <p class="text-muted small">Completed</p>
+                        </div>
+                        <div class="progress-step completed" id="step-documents">
+                            <div class="progress-step-label">Document Upload</div>
+                            <p class="text-muted small">Completed</p>
+                        </div>
+                        <div class="progress-step current" id="step-preview">
+                            <div class="progress-step-label">Preview & Submit</div>
+                            <p class="text-muted small">Review and submit your application</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Print functionality
+    const printButtons = document.querySelectorAll('.btn-print');
+    printButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.print();
+        });
+    });
+});
+</script>
+{% endblock %}

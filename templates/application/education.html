@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Education Information - Admission Portal{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Application Progress -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Application Progress</h5>
+                    <div class="progress" style="height: 20px;">
+                        <div class="progress-bar" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%</div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <span class="badge bg-primary">Step 2 of 4: Education Information</span>
+                        <span>Application #: {{ application.application_number }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Form Card -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-graduation-cap me-2"></i> Educational Information</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('education_info', application_id=application.id) }}" class="needs-validation" novalidate>
+                        {{ form.hidden_tag() }}
+                        
+                        <!-- Form Sections -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="highest_qualification" class="form-label">{{ form.highest_qualification.label }} <span class="text-danger">*</span></label>
+                                    {{ form.highest_qualification(class="form-select", id="highest_qualification", required=True) }}
+                                    <div class="invalid-feedback">Please select your highest qualification.</div>
+                                    {% if form.highest_qualification.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.highest_qualification.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="board_university" class="form-label">{{ form.board_university.label }} <span class="text-danger">*</span></label>
+                                    {{ form.board_university(class="form-control", id="board_university", placeholder="Enter your board/university name", required=True) }}
+                                    <div class="invalid-feedback">Please enter your board/university name.</div>
+                                    {% if form.board_university.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.board_university.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="year_of_passing" class="form-label">{{ form.year_of_passing.label }} <span class="text-danger">*</span></label>
+                                    {{ form.year_of_passing(class="form-control", id="year_of_passing", placeholder="Enter year of passing (e.g., 2020)", required=True) }}
+                                    <div class="form-text">Year must be between 1950 and the current year.</div>
+                                    <div class="invalid-feedback">Please enter a valid year of passing.</div>
+                                    {% if form.year_of_passing.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.year_of_passing.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="percentage_marks" class="form-label">{{ form.percentage_marks.label }} <span class="text-danger">*</span></label>
+                                    {{ form.percentage_marks(class="form-control", id="percentage_marks", placeholder="Enter percentage/CGPA (e.g., 85.5)", required=True) }}
+                                    <div class="form-text">Enter percentage (0-100) or CGPA as applicable.</div>
+                                    <div class="invalid-feedback">Please enter a valid percentage or CGPA.</div>
+                                    {% if form.percentage_marks.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.percentage_marks.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> Please provide accurate details about your highest educational qualification.
+                            This information will be verified during the document verification process.
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ url_for('personal_info', application_id=application.id) }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i> Previous: Personal Information
+                            </a>
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Application Process Overview -->
+            <div class="card mt-4 shadow-sm">
+                <div class="card-header bg-light">
+                    <h4 class="mb-0"><i class="fas fa-map-signs me-2"></i> Application Process</h4>
+                </div>
+                <div class="card-body">
+                    <div class="progress-tracker">
+                        <div class="progress-step completed" id="step-select">
+                            <div class="progress-step-label">Select Application Type</div>
+                            <p class="text-muted small">{{ application.application_type.replace('_', ' ').title() }}</p>
+                        </div>
+                        <div class="progress-step completed" id="step-personal">
+                            <div class="progress-step-label">Personal Information</div>
+                            <p class="text-muted small">Completed</p>
+                        </div>
+                        <div class="progress-step current" id="step-education">
+                            <div class="progress-step-label">Educational Details</div>
+                            <p class="text-muted small">Enter your educational qualifications</p>
+                        </div>
+                        <div class="progress-step" id="step-documents">
+                            <div class="progress-step-label">Document Upload</div>
+                            <p class="text-muted small">Upload required documents and photos</p>
+                        </div>
+                        <div class="progress-step" id="step-preview">
+                            <div class="progress-step-label">Preview & Submit</div>
+                            <p class="text-muted small">Review and submit your application</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

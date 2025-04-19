@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Admission Portal{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero text-center">
+    <div class="container">
+        <h1>Welcome to the Admission Portal</h1>
+        <p class="lead">Start your educational journey with us. Apply online, track your application status, and manage your admission process.</p>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('select_application') }}" class="btn btn-light btn-lg px-4 me-md-2">
+                    <i class="fas fa-file-alt me-2"></i> Start Application
+                </a>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-light btn-lg px-4">
+                    <i class="fas fa-tachometer-alt me-2"></i> Go to Dashboard
+                </a>
+            {% else %}
+                <a href="{{ url_for('register') }}" class="btn btn-light btn-lg px-4 me-md-2">
+                    <i class="fas fa-user-plus me-2"></i> Register
+                </a>
+                <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg px-4">
+                    <i class="fas fa-sign-in-alt me-2"></i> Login
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="container my-5">
+    <h2 class="text-center mb-4">Admission Process</h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="fs-1 text-primary mb-3">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h5 class="card-title">Register & Login</h5>
+                    <p class="card-text">Create your account and login to start your admission journey with us.</p>
+                </div>
+                <div class="card-footer bg-transparent border-0 text-center">
+                    <a href="{{ url_for('register') }}" class="btn btn-outline-primary">Register Now</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="fs-1 text-primary mb-3">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h5 class="card-title">Fill Application</h5>
+                    <p class="card-text">Complete the multi-step application form with your details and upload required documents.</p>
+                </div>
+                <div class="card-footer bg-transparent border-0 text-center">
+                    <a href="{{ url_for('select_application') if current_user.is_authenticated else url_for('login') }}" class="btn btn-outline-primary">Start Application</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="fs-1 text-primary mb-3">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h5 class="card-title">Track Status</h5>
+                    <p class="card-text">Check your application status and download your application form anytime.</p>
+                </div>
+                <div class="card-footer bg-transparent border-0 text-center">
+                    <a href="{{ url_for('check_status') }}" class="btn btn-outline-primary">Check Status</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Programs Section -->
+<section class="container my-5">
+    <h2 class="text-center mb-4">Available Programs</h2>
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Undergraduate Programs</h5>
+                    <p class="card-text">Bachelor's degree programs in various disciplines including Science, Arts, Commerce, Engineering, and more.</p>
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Bachelor of Science (B.Sc)</li>
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Bachelor of Arts (B.A)</li>
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Bachelor of Commerce (B.Com)</li>
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Bachelor of Technology (B.Tech)</li>
+                    </ul>
+                    <a href="{{ url_for('select_application') if current_user.is_authenticated else url_for('login') }}" class="btn btn-primary">Apply Now</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Postgraduate Programs</h5>
+                    <p class="card-text">Master's degree programs for advanced specialization in your field of choice.</p>
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Master of Science (M.Sc)</li>
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Master of Arts (M.A)</li>
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Master of Commerce (M.Com)</li>
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Master of Technology (M.Tech)</li>
+                    </ul>
+                    <a href="{{ url_for('select_application') if current_user.is_authenticated else url_for('login') }}" class="btn btn-primary">Apply Now</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Diploma Courses</h5>
+                    <p class="card-text">Skill-based diploma programs to enhance your employability and practical knowledge.</p>
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Diploma in Computer Applications</li>
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Diploma in Business Management</li>
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Diploma in Digital Marketing</li>
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Diploma in Graphic Design</li>
+                    </ul>
+                    <a href="{{ url_for('select_application') if current_user.is_authenticated else url_for('login') }}" class="btn btn-primary">Apply Now</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Certificate Programs</h5>
+                    <p class="card-text">Short-term certificate programs for specific skills and professional development.</p>
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Certificate in Web Development</li>
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Certificate in Data Science</li>
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Certificate in Foreign Languages</li>
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Certificate in Financial Analysis</li>
+                    </ul>
+                    <a href="{{ url_for('select_application') if current_user.is_authenticated else url_for('login') }}" class="btn btn-primary">Apply Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Important Dates Section -->
+<section class="container my-5">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0"><i class="fas fa-calendar-alt me-2"></i> Important Dates</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>Date</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Application Starts</strong></td>
+                            <td>January 15, 2023</td>
+                            <td>Online application portal opens for all programs</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Last Date for Application</strong></td>
+                            <td>March 31, 2023</td>
+                            <td>Final date to submit completed applications</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Document Verification</strong></td>
+                            <td>April 1-30, 2023</td>
+                            <td>Verification of submitted documents</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Results Declaration</strong></td>
+                            <td>May 15, 2023</td>
+                            <td>Admission results will be published</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Admission Confirmation</strong></td>
+                            <td>June 15, 2023</td>
+                            <td>Last date to confirm admission by fee payment</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Orientation Program</strong></td>
+                            <td>July 1, 2023</td>
+                            <td>Orientation for new batch</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Classes Begin</strong></td>
+                            <td>July 5, 2023</td>
+                            <td>Start of academic session</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="container my-5">
+    <div class="p-5 text-center bg-light rounded">
+        <h2 class="mb-3">Ready to Start Your Journey?</h2>
+        <p class="mb-4">Join our institution and take the first step towards your successful career. Our admission process is simple and user-friendly.</p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('select_application') }}" class="btn btn-primary btn-lg px-4 me-sm-3">
+                    <i class="fas fa-file-alt me-2"></i> Start Application
+                </a>
+            {% else %}
+                <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg px-4 me-sm-3">
+                    <i class="fas fa-user-plus me-2"></i> Register Now
+                </a>
+                <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-lg px-4">
+                    <i class="fas fa-sign-in-alt me-2"></i> Login
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

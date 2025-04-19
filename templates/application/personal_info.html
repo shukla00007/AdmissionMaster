@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}Personal Information - Admission Portal{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Application Progress -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Application Progress</h5>
+                    <div class="progress" style="height: 20px;">
+                        <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <span class="badge bg-primary">Step 1 of 4: Personal Information</span>
+                        <span>Application #: {{ application.application_number }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Form Card -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-user me-2"></i> Personal Information</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('personal_info', application_id=application.id) }}" class="needs-validation" novalidate>
+                        {{ form.hidden_tag() }}
+                        
+                        <!-- Form Sections -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="first_name" class="form-label">{{ form.first_name.label }} <span class="text-danger">*</span></label>
+                                    {{ form.first_name(class="form-control", id="first_name", placeholder="Enter your first name", required=True) }}
+                                    <div class="invalid-feedback">Please enter your first name.</div>
+                                    {% if form.first_name.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.first_name.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="last_name" class="form-label">{{ form.last_name.label }} <span class="text-danger">*</span></label>
+                                    {{ form.last_name(class="form-control", id="last_name", placeholder="Enter your last name", required=True) }}
+                                    <div class="invalid-feedback">Please enter your last name.</div>
+                                    {% if form.last_name.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.last_name.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="date_of_birth" class="form-label">{{ form.date_of_birth.label }} <span class="text-danger">*</span></label>
+                                    {{ form.date_of_birth(class="form-control", id="date_of_birth", required=True, type="date") }}
+                                    <div class="invalid-feedback">Please select your date of birth.</div>
+                                    {% if form.date_of_birth.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.date_of_birth.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="gender" class="form-label">{{ form.gender.label }} <span class="text-danger">*</span></label>
+                                    {{ form.gender(class="form-select", id="gender", required=True) }}
+                                    <div class="invalid-feedback">Please select your gender.</div>
+                                    {% if form.gender.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.gender.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">{{ form.phone.label }} <span class="text-danger">*</span></label>
+                                    {{ form.phone(class="form-control", id="phone", placeholder="Enter your phone number", required=True) }}
+                                    <div class="form-text">Please provide a valid contact number with country code if applicable.</div>
+                                    <div class="invalid-feedback">Please enter a valid phone number.</div>
+                                    {% if form.phone.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.phone.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="email" value="{{ current_user.email }}" readonly>
+                                    <div class="form-text">This is the email associated with your account.</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="address" class="form-label">{{ form.address.label }} <span class="text-danger">*</span></label>
+                            {{ form.address(class="form-control", id="address", placeholder="Enter your full address", rows=3, required=True) }}
+                            <div class="invalid-feedback">Please enter your address.</div>
+                            {% if form.address.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.address.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="city" class="form-label">{{ form.city.label }} <span class="text-danger">*</span></label>
+                                    {{ form.city(class="form-control", id="city", placeholder="Enter your city", required=True) }}
+                                    <div class="invalid-feedback">Please enter your city.</div>
+                                    {% if form.city.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.city.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="state" class="form-label">{{ form.state.label }} <span class="text-danger">*</span></label>
+                                    {{ form.state(class="form-control", id="state", placeholder="Enter your state/province", required=True) }}
+                                    <div class="invalid-feedback">Please enter your state/province.</div>
+                                    {% if form.state.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.state.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="pincode" class="form-label">{{ form.pincode.label }} <span class="text-danger">*</span></label>
+                                    {{ form.pincode(class="form-control", id="pincode", placeholder="Enter your PIN/ZIP code", required=True) }}
+                                    <div class="invalid-feedback">Please enter a valid PIN/ZIP code.</div>
+                                    {% if form.pincode.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.pincode.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> All fields marked with <span class="text-danger">*</span> are required.
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+                            </a>
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Application Process Overview -->
+            <div class="card mt-4 shadow-sm">
+                <div class="card-header bg-light">
+                    <h4 class="mb-0"><i class="fas fa-map-signs me-2"></i> Application Process</h4>
+                </div>
+                <div class="card-body">
+                    <div class="progress-tracker">
+                        <div class="progress-step completed" id="step-select">
+                            <div class="progress-step-label">Select Application Type</div>
+                            <p class="text-muted small">{{ application.application_type.replace('_', ' ').title() }}</p>
+                        </div>
+                        <div class="progress-step current" id="step-personal">
+                            <div class="progress-step-label">Personal Information</div>
+                            <p class="text-muted small">Provide your personal and contact details</p>
+                        </div>
+                        <div class="progress-step" id="step-education">
+                            <div class="progress-step-label">Educational Details</div>
+                            <p class="text-muted small">Enter your educational qualifications</p>
+                        </div>
+                        <div class="progress-step" id="step-documents">
+                            <div class="progress-step-label">Document Upload</div>
+                            <p class="text-muted small">Upload required documents and photos</p>
+                        </div>
+                        <div class="progress-step" id="step-preview">
+                            <div class="progress-step-label">Preview & Submit</div>
+                            <p class="text-muted small">Review and submit your application</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

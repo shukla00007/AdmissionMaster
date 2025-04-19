@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Admission Portal{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-sign-in-alt me-2"></i> Login</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">{{ form.email.label }}</label>
+                            {{ form.email(class="form-control", id="email", placeholder="Enter your email") }}
+                            {% if form.email.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.email.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">{{ form.password.label }}</label>
+                            <div class="input-group">
+                                {{ form.password(class="form-control", id="password", placeholder="Enter your password") }}
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword" onclick="togglePasswordVisibility('password', 'passwordIcon')">
+                                    <i id="passwordIcon" class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            {% if form.password.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.password.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">Remember me</label>
+                        </div>
+                        
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <div class="small">Don't have an account? <a href="{{ url_for('register') }}">Register here</a></div>
+                    <div class="small mt-2"><a href="#">Forgot Password?</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
