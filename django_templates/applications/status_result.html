@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Application Status{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Application Status</h2>
+    {% if application %}
+        <p><strong>Application Number:</strong> {{ application.application_number }}</p>
+        <p><strong>Status:</strong> {{ application.get_status_display }}</p>
+        <p><strong>Submitted At:</strong> {{ application.submitted_at|date:"F j, Y, g:i a" }}</p>
+        <p><strong>Last Updated:</strong> {{ application.updated_at|date:"F j, Y, g:i a" }}</p>
+        <p><strong>Application Type:</strong> {{ application.application_type }}</p>
+        <p><strong>User:</strong> {{ application.user.get_full_name }}</p>
+    {% else %}
+        <p>No application details available.</p>
+    {% endif %}
+    <a href="{% url 'check_status' %}" class="btn btn-primary mt-3">Check Another Application</a>
+</div>
+{% endblock %}

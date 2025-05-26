@@ -1,0 +1,22 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ site_title|default:_('Admin') }}{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/custom.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/custom_override.css' %}">
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name" style="color: var(--primary-color); font-weight: 700; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+    <a href="{% url 'admin:index' %}" style="color: var(--primary-color); text-decoration: none;">
+        Admission Portal Admin
+    </a>
+</h1>
+
+
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Check Application Status - Admission Portal{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card fade-in mb-4">
+            <div class="card-header">
+                <h4 class="mb-0">Check Application Status</h4>
+            </div>
+            <div class="card-body p-4">
+                <p class="mb-4">Enter your application number to check the status of your admission application.</p>
+                
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="application_number" class="form-label">Application Number</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            {{ form.application_number }}
+                        </div>
+                        {% if form.application_number.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.application_number.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Your application number was provided during the application process.</div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-search me-2"></i>Check Status
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <p class="mb-0">Don't have an application yet? <a href="{% url 'select_application' %}">Start one now</a></p>
+                </div>
+            </div>
+        </div>
+        
+        {% if application %}
+            <div class="card fade-in">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Application Status</h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" width="50%">Application Number:</th>
+                                        <td>{{ application.application_number }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Applicant Name:</th>
+                                        <td>{{ application.first_name }} {{ application.last_name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Application Type:</th>
+                                        <td>{{ application.get_application_type_display }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Applied On:</th>
+                                        <td>{{ application.submitted_at|date:"M d, Y"|default:"Not submitted" }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="status-indicator text-center p-3">
+                                {% if application.status == 'draft' %}
+                                    <div class="status-icon bg-secondary mb-3">
+                                        <i class="fas fa-pencil-alt fa-2x"></i>
+                                    </div>
+                                    <h5>In Progress</h5>
+                                    <p class="text-muted">Application not yet submitted</p>
+                                {% elif application.status == 'submitted' %}
+                                    <div class="status-icon bg-info mb-3">
+                                        <i class="fas fa-paper-plane fa-2x"></i>
+                                    </div>
+                                    <h5>Submitted</h5>
+                                    <p class="text-muted">Awaiting review</p>
+                                {% elif application.status == 'under_review' %}
+                                    <div class="status-icon bg-warning mb-3">
+                                        <i class="fas fa-search fa-2x"></i>
+                                    </div>
+                                    <h5>Under Review</h5>
+                                    <p class="text-muted">Application is being reviewed</p>
+                                {% elif application.status == 'approved' %}
+                                    <div class="status-icon bg-success mb-3">
+                                        <i class="fas fa-check-circle fa-2x"></i>
+                                    </div>
+                                    <h5>Approved</h5>
+                                    <p class="text-muted">Congratulations! Your application has been approved.</p>
+                                {% elif application.status == 'rejected' %}
+                                    <div class="status-icon bg-danger mb-3">
+                                        <i class="fas fa-times-circle fa-2x"></i>
+                                    </div>
+                                    <h5>Rejected</h5>
+                                    <p class="text-muted">Unfortunately, your application was not approved.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h5 class="mb-3">Application Timeline</h5>
+                        <div class="timeline">
+                            <div class="timeline-item active">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-content">
+                                    <h6>Application Created</h6>
+                                    <p class="text-muted">{{ application.created_at|date:"M d, Y" }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item {% if application.status != 'draft' %}active{% endif %}">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-content">
+                                    <h6>Application Submitted</h6>
+                                    <p class="text-muted">
+                                        {% if application.submitted_at %}
+                                            {{ application.submitted_at|date:"M d, Y" }}
+                                        {% else %}
+                                            Pending
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item {% if application.status == 'under_review' or application.status == 'approved' or application.status == 'rejected' %}active{% endif %}">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-content">
+                                    <h6>Under Review</h6>
+                                    <p class="text-muted">
+                                        {% if application.status == 'under_review' or application.status == 'approved' or application.status == 'rejected' %}
+                                            In progress
+                                        {% else %}
+                                            Pending
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item {% if application.status == 'approved' or application.status == 'rejected' %}active{% endif %}">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-content">
+                                    <h6>Final Decision</h6>
+                                    <p class="text-muted">
+                                        {% if application.status == 'approved' %}
+                                            Approved
+                                        {% elif application.status == 'rejected' %}
+                                            Rejected
+                                        {% else %}
+                                            Pending
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if user.is_authenticated and application.user_id == user.id %}
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+                            <a href="{% url 'dashboard' %}" class="btn btn-primary">
+                                <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+                            </a>
+                            {% if application.status != 'draft' %}
+                                <a href="{% url 'download_application' application.id %}" class="btn btn-outline-primary">
+                                    <i class="fas fa-download me-2"></i>Download Application
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+    .status-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        color: white;
+    }
+    
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+        margin-bottom: 20px;
+    }
+    
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 10px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background-color: #e9ecef;
+    }
+    
+    .timeline-item {
+        position: relative;
+        margin-bottom: 25px;
+        opacity: 0.6;
+    }
+    
+    .timeline-item.active {
+        opacity: 1;
+    }
+    
+    .timeline-dot {
+        position: absolute;
+        left: -30px;
+        top: 0;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: #e9ecef;
+        border: 2px solid #fff;
+        z-index: 1;
+    }
+    
+    .timeline-item.active .timeline-dot {
+        background-color: var(--primary-color);
+    }
+    
+    .timeline-content {
+        padding-bottom: 10px;
+    }
+    
+    .timeline-content h6 {
+        margin-bottom: 5px;
+    }
+    
+    .timeline-content p {
+        margin-bottom: 0;
+        font-size: 0.85rem;
+    }
+</style>
+{% endblock %}
+{% endblock %}

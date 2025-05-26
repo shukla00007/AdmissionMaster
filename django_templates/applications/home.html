@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Welcome to Admission Portal{% endblock %}
+
+{% block content %}
+<div class="row py-5">
+    <div class="col-lg-7 fade-in">
+        <h1 class="display-4 fw-bold mb-4">Acharya Narendra Dev College</h1>
+        <h1 class="display-4 fw-bold mb-4">UNIVERSITY OF DELHI</h1>
+        <p class="lead mb-4">
+            Govindpuri, Kalkaji, New Delhi 110019
+            Accredited 'A+' Grade by NAAC
+            DBT Star Status College</p>
+            
+        
+        <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-5">
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg px-4 me-md-2">
+                    <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+                </a>
+            {% else %}
+	                <a href="{% url 'register' %}" class="btn btn-primary btn-lg px-4 me-md-2">
+	                    <i class="fas fa-user-plus me-2"></i>Register Now
+	                </a>
+	                <a href="{% url 'login' %}" class="btn btn-outline-secondary btn-lg px-4">
+	                    <i class="fas fa-sign-in-alt me-2"></i>Login
+	                </a>
+            {% endif %}
+        </div>
+        
+        <!-- <div class="row my-5">
+            <div class="col-md-4 mb-3">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-pencil-alt fa-3x text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Easy Application</h5>
+                        <p class="card-text">Simple step-by-step application process with guided forms.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-clock fa-3x text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Real-time Status</h5>
+                        <p class="card-text">Track your application status in real-time throughout the process.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-file-download fa-3x text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Download Documents</h5>
+                        <p class="card-text">Download your completed applications and acceptance letters.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
+    <div class="col-lg-5 d-flex align-items-center">
+        <div class="card shadow-lg">
+            <div class="card-body p-5">
+                <h3 class="card-title mb-4">Check Application Status</h3>
+                
+                <form method="post" action="{% url 'check_status' %}" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="application_number" class="form-label">Application Number</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            {{ form.application_number }}
+                        </div>
+                        {% if form.application_number.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.application_number.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Check Status</button>
+                    </div>
+                </form>
+                
+                <div class="mt-4 text-center">
+	                    <p class="mb-0 text-muted">New applicant? <a href="{% url 'register' %}">Register here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5 mb-4">
+    <div class="col-12">
+        <div class="card fade-in">
+            <div class="card-header">
+                <h3 class="mb-0">Available Programs</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Undergraduate Programs</h5>
+                                <p class="card-text">Four-year bachelor's degree programs in various disciplines including Engineering, Science, Arts, and Commerce.</p>
+                                <a href="#" class="btn btn-outline-primary">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Postgraduate Programs</h5>
+                                <p class="card-text">Advanced master's degree programs for graduates looking to specialize in their field of study.</p>
+                                <a href="#" class="btn btn-outline-primary">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Diploma Courses</h5>
+                                <p class="card-text">Short-term diploma courses in technical and professional fields for skill enhancement.</p>
+                                <a href="#" class="btn btn-outline-primary">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Certificate Programs</h5>
+                                <p class="card-text">Short-duration certificate programs to gain specific skills and knowledge in various domains.</p>
+                                <a href="#" class="btn btn-outline-primary">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

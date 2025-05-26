@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Application PDF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            color: #000;
+        }
+        h2, h3 {
+            margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            background-color: #f2f2f2;
+        }
+        td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<head>
+    <meta charset="utf-8">
+    <title>Application PDF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            color: #000;
+        }
+        h2, h3 {
+            margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            background-color: #f2f2f2;
+        }
+        td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .left-side {
+            width: 65%;
+        }
+        .right-side {
+            width: 30%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .photo, .signature {
+            max-width: 120px;
+            max-height: 150px;
+            border: 1px solid #ddd;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        .buttons {
+            margin-top: 20px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-side">
+            <h2>Application Details</h2>
+            <table>
+                <tr>
+                    <th>Application Number:</th>
+                    <td>{{ application.application_number }}</td>
+                </tr>
+                <tr>
+                    <th>Application Type:</th>
+                    <td>{{ application.application_type }}</td>
+                </tr>
+                <tr>
+                    <th>Status:</th>
+                    <td>{{ application.get_status_display }}</td>
+                </tr>
+                <tr>
+                    <th>Submitted At:</th>
+                    <td>{{ application.submitted_at|date:"M d, Y" }}</td>
+                </tr>
+            </table>
+
+            <h3>Applicant Information</h3>
+            <table>
+                <tr>
+                    <th>Name:</th>
+                    <td>{{ application.first_name }} {{ application.last_name }}</td>
+                </tr>
+                <tr>
+                    <th>Date of Birth:</th>
+                    <td>{{ application.date_of_birth|date:"M d, Y" }}</td>
+                </tr>
+                <tr>
+                    <th>Gender:</th>
+                    <td>{{ application.gender|capfirst }}</td>
+                </tr>
+                <tr>
+                    <th>Phone:</th>
+                    <td>{{ application.phone }}</td>
+                </tr>
+                <tr>
+                    <th>Email:</th>
+                    <td>{{ application.user.email }}</td>
+                </tr>
+                <tr>
+                    <th>Aadhar Number:</th>
+                    <td>{{ application.aadhar_no }}</td>
+                </tr>
+            </table>
+
+            <h3>Address Information</h3>
+            <table>
+                <tr>
+                    <th>Address:</th>
+                    <td>{{ application.address }}</td>
+                </tr>
+                <tr>
+                    <th>City:</th>
+                    <td>{{ application.city }}</td>
+                </tr>
+                <tr>
+                    <th>State:</th>
+                    <td>{{ application.state }}</td>
+                </tr>
+                <tr>
+                    <th>PIN Code:</th>
+                    <td>{{ application.pincode }}</td>
+                </tr>
+            </table>
+
+            <h3>Education Details</h3>
+            <table>
+                <tr>
+                    <th>Highest Qualification:</th>
+                    <td>{{ application.get_highest_qualification_display }}</td>
+                </tr>
+                <tr>
+                    <th>Board/University:</th>
+                    <td>{{ application.board_university }}</td>
+                </tr>
+                <tr>
+                    <th>Year of Passing:</th>
+                    <td>{{ application.year_of_passing }}</td>
+                </tr>
+                <tr>
+                    <th>Percentage/CGPA:</th>
+                    <td>{{ application.percentage_marks }}%</td>
+                </tr>
+            </table>
+        </div>
+        <div class="right-side">
+            {% comment %} Photo in top right corner {% endcomment %}
+            {% with photo=documents.photo %}
+                {% if photo %}
+                    <img src="{{ photo.file.url }}" alt="Applicant Photo" class="photo" />
+                {% endif %}
+            {% endwith %}
+            {% comment %} Signature below photo {% endcomment %}
+            {% with signature=documents.signature %}
+                {% if signature %}
+                    <img src="{{ signature.file.url }}" alt="Applicant Signature" class="signature" />
+                {% endif %}
+            {% endwith %}
+            <div class="buttons">
+                {% comment %} Button for Aadhar document {% endcomment %}
+                {% with aadhar=documents.aadhar %}
+                    {% if aadhar %}
+                        <a href="{{ aadhar.file.url }}" class="btn" target="_blank">Aadhar</a>
+                    {% endif %}
+                {% endwith %}
+                {% comment %} Button for other documents {% endcomment %}
+                {% for doc_type, doc in documents.items %}
+                    {% if doc_type != 'photo' and doc_type != 'signature' and doc_type != 'aadhar' %}
+                        <a href="{{ doc.file.url }}" class="btn" target="_blank">{{ doc_type|capfirst }}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

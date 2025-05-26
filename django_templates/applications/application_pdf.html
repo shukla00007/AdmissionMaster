@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Application PDF - Admission Portal{% endblock %}
+
+{% block content %}
+<div style="padding: 20px; font-family: Arial, sans-serif;">
+    <h2>Application Details</h2>
+    <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Application Number:</th>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ application.application_number }}</td>
+        </tr>
+        <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Application Type:</th>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ application.get_application_type_display }}</td>
+        </tr>
+        <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Status:</th>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ application.get_status_display }}</td>
+        </tr>
+        <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Submitted At:</th>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ application.submitted_at|date:"M d, Y" }}</td>
+        </tr>
+    </table>
+
+    <h3>Applicant Information</h3>
+    <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Name:</th>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ application.first_name }} {{ application.last_name }}</td>
+        </tr>
+        <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Date of Birth:</th>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ application.date_of_birth|date:"M d, Y" }}</td>
+        </tr>
+        <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Gender:</th>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ application.gender|capfirst }}</td>
+        </tr>
+        <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Phone:</th>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ application.phone }}</td>
+        </tr>
+        <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Email:</th>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ application.user.email }}</td>
+        </tr>
+        <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Aadhar Number:</th>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ application.aadhar_no }}</td>
+        </tr>
+    </table>
+
+    <h3>Address Information</h3>
+    <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Address:</th>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ application.address }}</td>
+        </tr>
+        <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">City:</th>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ application.city }}</td>
+        </tr>
+        <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">State:</th>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ application.state }}</td>
+        </tr>
+        <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">PIN Code:</th>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ application.pincode }}</td>
+        </tr>
+    </table>
+
+    <h3>Education Details</h3>
+    <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Highest Qualification:</th>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ application.get_highest_qualification_display }}</td>
+        </tr>
+        <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Board/University:</th>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ application.board_university }}</td>
+        </tr>
+        <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Year of Passing:</th>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ application.year_of_passing }}</td>
+        </tr>
+        <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Percentage/CGPA:</th>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ application.percentage_marks }}%</td>
+        </tr>
+    </table>
+</div>
+{% endblock %}

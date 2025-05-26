@@ -1,0 +1,344 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Application Preview - Admission Portal{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card fade-in">
+            <div class="card-header">
+                <h4 class="mb-0">Application Progress</h4>
+            </div>
+            <div class="card-body">
+                <div class="step-indicator">
+                    <div class="step completed" id="stepPersonal">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Personal Information</div>
+                    </div>
+                    <div class="step completed" id="stepEducation">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Education Background</div>
+                    </div>
+                    <div class="step completed" id="stepDocuments">
+                        <div class="step-number">3</div>
+                        <div class="step-label">Documents</div>
+                    </div>
+                    <div class="step active" id="stepReview">
+                        <div class="step-number">4</div>
+                        <div class="step-label">Review & Submit</div>
+                    </div>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress">
+                        <div class="progress-bar" id="applicationProgress" role="progressbar" style="width: 100%;" 
+                             aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">100%</div>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <p class="mb-0"><strong>Application Type:</strong> {{ application.application_type }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card fade-in">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Application Preview</h4>
+                
+                {% if not print_view %}
+                <div>
+                    <a href="{% url 'download_application' application.id %}" class="btn btn-outline-success">
+                        <i class="fas fa-file-pdf me-2"></i>Download PDF
+                    </a>
+                    <button class="btn btn-outline-secondary btn-print ms-2" type="button">
+                        <i class="fas fa-print me-2"></i>Print
+                    </button>
+                    {% if application.status == 'draft' %}
+                    <a href="{% url 'submit_application' application.id %}" class="btn btn-primary ms-2">
+                        <i class="fas fa-paper-plane me-2"></i>Submit Application
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-body p-4">
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Application Details</h5>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-borderless">
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row" width="40%">Application Number:</th>
+                                            <td>{{ application.application_number }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Application Type:</th>
+                                            <td>{{ application.application_type }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Status:</th>
+                                            <td>
+                                                {% if application.status == 'draft' %}
+                                                    <span class="badge bg-secondary">In Progress</span>
+                                                {% elif application.status == 'submitted' %}
+                                                    <span class="badge bg-info">Submitted</span>
+                                                {% elif application.status == 'under_review' %}
+                                                    <span class="badge bg-warning">Under Review</span>
+                                                {% elif application.status == 'approved' %}
+                                                    <span class="badge bg-success">Approved</span>
+                                                {% elif application.status == 'rejected' %}
+                                                    <span class="badge bg-danger">Rejected</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Created On:</th>
+                                            <td>{{ application.created_at|date:"M d, Y" }}</td>
+                                        </tr>
+                                        {% if application.submitted_at %}
+                                        <tr>
+                                            <th scope="row">Submitted On:</th>
+                                            <td>{{ application.submitted_at|date:"M d, Y" }}</td>
+                                        </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Applicant Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-borderless">
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row" width="40%">Name:</th>
+                                            <td>{{ application.first_name }} {{ application.last_name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Date of Birth:</th>
+                                            <td>{{ application.date_of_birth|date:"M d, Y" }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Gender:</th>
+                                            <td>{{ application.gender|capfirst }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Phone:</th>
+                                            <td>{{ application.phone }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Email:</th>
+                                            <td>{{ application.applicant.email }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Address Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-borderless">
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row" width="40%">Address:</th>
+                                            <td>{{ application.address }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">City:</th>
+                                            <td>{{ application.city }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">State:</th>
+                                            <td>{{ application.state }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">PIN Code:</th>
+                                            <td>{{ application.pincode }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Education Details</h5>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-borderless">
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row" width="40%">Highest Qualification:</th>
+                                            <td>{{ application.get_highest_qualification_display }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Board/University:</th>
+                                            <td>{{ application.board_university }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Year of Passing:</th>
+                                            <td>{{ application.year_of_passing }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Percentage/CGPA:</th>
+                                            <td>{{ application.percentage_marks }}%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Uploaded Documents</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3 mb-3 text-center">
+                                        <h6>Photo</h6>
+                                        {% if documents.photo %}
+                                            <img src="{{ documents.photo.file.url }}" class="img-thumbnail" 
+                                                 alt="Photo" style="height: 150px;">
+                                        {% else %}
+                                            <div class="document-placeholder">
+                                                <i class="fas fa-user fa-4x text-muted"></i>
+                                                <p class="text-muted mt-2">Not Uploaded</p>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-3 mb-3 text-center">
+                                        <h6>Signature</h6>
+                                        {% if documents.signature %}
+                                            <img src="{{ documents.signature.file.url }}" class="img-thumbnail" 
+                                                 alt="Signature" style="height: 100px;">
+                                        {% else %}
+                                            <div class="document-placeholder">
+                                                <i class="fas fa-signature fa-4x text-muted"></i>
+                                                <p class="text-muted mt-2">Not Uploaded</p>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-3 mb-3 text-center">
+                                        <h6>Aadhar Card</h6>
+                                        {% if documents.aadhar %}
+                                            {% if documents.aadhar.file.url|slice:"-3:" == "pdf" %}
+                                                <div class="document-icon">
+                                                    <i class="fas fa-file-pdf fa-4x text-danger"></i>
+                                                </div>
+                                                <p class="mt-2">
+                                                    <a href="{{ documents.aadhar.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-eye me-1"></i>View PDF
+                                                    </a>
+                                                </p>
+                                            {% else %}
+                                                <img src="{{ documents.aadhar.file.url }}" class="img-thumbnail" 
+                                                     alt="Aadhar" style="height: 150px;">
+                                            {% endif %}
+                                        {% else %}
+                                            <div class="document-placeholder">
+                                                <i class="fas fa-id-card fa-4x text-muted"></i>
+                                                <p class="text-muted mt-2">Not Uploaded</p>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-3 mb-3 text-center">
+                                        <h6>Educational Marksheet</h6>
+                                        {% if documents.marksheet %}
+                                            {% if documents.marksheet.file.url|slice:"-3:" == "pdf" %}
+                                                <div class="document-icon">
+                                                    <i class="fas fa-file-pdf fa-4x text-danger"></i>
+                                                </div>
+                                                <p class="mt-2">
+                                                    <a href="{{ documents.marksheet.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-eye me-1"></i>View PDF
+                                                    </a>
+                                                </p>
+                                            {% else %}
+                                                <img src="{{ documents.marksheet.file.url }}" class="img-thumbnail" 
+                                                     alt="Marksheet" style="height: 150px;">
+                                            {% endif %}
+                                        {% else %}
+                                            <div class="document-placeholder">
+                                                <i class="fas fa-file-alt fa-4x text-muted"></i>
+                                                <p class="text-muted mt-2">Not Uploaded</p>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-between mt-4">
+                    {% if application.status == 'draft' and not print_view %}
+                        <div>
+                            <a href="{% url 'documents_upload' application.id %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back
+                            </a>
+                        </div>
+                        <div>
+                            <a href="{% url 'submit_application' application.id %}" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-2"></i>Submit Application
+                            </a>
+                        </div>
+                    {% elif not print_view %}
+                        <div>
+                            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                            </a>
+                        </div>
+                        <div>
+                            <a href="{% url 'download_application' application.id %}" class="btn btn-primary">
+                                <i class="fas fa-download me-2"></i>Download PDF
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+    .document-placeholder {
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        border: 2px dashed #dee2e6;
+    }
+</style>
+{% endblock %}
+{% endblock %}

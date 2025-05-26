@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+
+{% block title %}Document Upload - Admission Portal{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card fade-in">
+            <div class="card-header">
+                <h4 class="mb-0">Application Progress</h4>
+            </div>
+            <div class="card-body">
+                <div class="step-indicator">
+                    <div class="step completed" id="stepPersonal">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Personal Information</div>
+                    </div>
+                    <div class="step completed" id="stepEducation">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Education Background</div>
+                    </div>
+                    <div class="step active" id="stepDocuments">
+                        <div class="step-number">3</div>
+                        <div class="step-label">Documents</div>
+                    </div>
+                    <div class="step" id="stepReview">
+                        <div class="step-number">4</div>
+                        <div class="step-label">Review & Submit</div>
+                    </div>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress">
+                        <div class="progress-bar" id="applicationProgress" role="progressbar" style="width: 75%;" 
+                             aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">75%</div>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <p class="mb-0"><strong>Application Type:</strong> {{ application.get_application_type_display }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card fade-in">
+            <div class="card-header">
+                <h4 class="mb-0">Document Upload</h4>
+            </div>
+            <div class="card-body p-4">
+                <p class="mb-4">Upload the required documents for your application. Accepted formats: JPG, PNG, PDF.</p>
+                
+                <form method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Passport Size Photograph</h5>
+                                </div>
+                                <div class="card-body">
+                                    {% if existing_documents.photo %}
+                                        <div class="text-center mb-3">
+                                            <img src="{{ existing_documents.photo.file.url }}" class="img-fluid img-thumbnail" 
+                                                 alt="Uploaded Photo" style="max-height: 150px;">
+                                        </div>
+                                        <p class="text-success mb-3">
+                                            <i class="fas fa-check-circle me-2"></i>Uploaded on 
+                                            {{ existing_documents.photo.uploaded_at|date:"M d, Y" }}
+                                        </p>
+                                    {% endif %}
+                                    
+                                    <div class="file-upload-container">
+                                        <input type="file" class="form-control" id="photo" name="photo" 
+                                               accept="image/jpeg,image/png">
+                                        <img id="photo-preview" src="{% if existing_documents.photo %}{{ existing_documents.photo.file.url }}{% endif %}" 
+                                             alt="Photo Preview" class="img-fluid img-thumbnail mt-3" style="max-height: 150px; {% if not existing_documents.photo %}display:none;{% endif %}">
+                                        {% if form.photo.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.photo.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <small class="form-text text-muted">
+                                            JPG or PNG format, max 2MB.
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Signature</h5>
+                                </div>
+                                <div class="card-body">
+                                    {% if existing_documents.signature %}
+                                        <div class="text-center mb-3">
+                                            <img src="{{ existing_documents.signature.file.url }}" class="img-fluid img-thumbnail" 
+                                                 alt="Uploaded Signature" style="max-height: 100px;">
+                                        </div>
+                                        <p class="text-success mb-3">
+                                            <i class="fas fa-check-circle me-2"></i>Uploaded on 
+                                            {{ existing_documents.signature.uploaded_at|date:"M d, Y" }}
+                                        </p>
+                                    {% endif %}
+                                    
+                                    <div class="file-upload-container">
+                                        <input type="file" class="form-control" id="signature" name="signature" 
+                                               accept="image/jpeg,image/png">
+                                        <img id="signature-preview" src="{% if existing_documents.signature %}{{ existing_documents.signature.file.url }}{% endif %}" 
+                                             alt="Signature Preview" class="img-fluid img-thumbnail mt-3" style="max-height: 100px; {% if not existing_documents.signature %}display:none;{% endif %}">
+                                        {% if form.signature.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.signature.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <small class="form-text text-muted">
+                                            JPG or PNG format, max 2MB.
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Aadhar Card</h5>
+                                </div>
+                                <div class="card-body">
+                                    {% if existing_documents.aadhar %}
+                                        <div class="text-center mb-3">
+                                            {% if existing_documents.aadhar.file.url|slice:"-3:" == "pdf" %}
+                                                <div class="document-icon">
+                                                    <i class="fas fa-file-pdf fa-4x text-danger"></i>
+                                                </div>
+                                                <p class="mt-2">
+                                                    <a href="{{ existing_documents.aadhar.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-eye me-1"></i>View PDF
+                                                    </a>
+                                                </p>
+                                            {% else %}
+                                                <img src="{{ existing_documents.aadhar.file.url }}" class="img-fluid img-thumbnail" 
+                                                     alt="Uploaded Aadhar" style="max-height: 150px;">
+                                            {% endif %}
+                                        </div>
+                                        <p class="text-success mb-3">
+                                            <i class="fas fa-check-circle me-2"></i>Uploaded on 
+                                            {{ existing_documents.aadhar.uploaded_at|date:"M d, Y" }}
+                                        </p>
+                                    {% endif %}
+                                    
+                                    <div class="file-upload-container">
+                                        <input type="file" class="form-control" id="aadhar" name="aadhar" 
+                                               accept="image/jpeg,image/png,application/pdf">
+                                        <img id="aadhar-preview" src="{% if existing_documents.aadhar and existing_documents.aadhar.file.url|slice:'-3:' != 'pdf' %}{{ existing_documents.aadhar.file.url }}{% endif %}" 
+                                             alt="Aadhar Preview" class="img-fluid img-thumbnail mt-3" style="max-height: 150px; {% if not existing_documents.aadhar or existing_documents.aadhar.file.url|slice:'-3:' == 'pdf' %}display:none;{% endif %}">
+                                        <embed id="aadhar-pdf-preview" src="{% if existing_documents.aadhar and existing_documents.aadhar.file.url|slice:'-3:' == 'pdf' %}{{ existing_documents.aadhar.file.url }}{% endif %}" 
+                                               type="application/pdf" class="mt-3" style="width: 100%; height: 300px; {% if not existing_documents.aadhar or existing_documents.aadhar.file.url|slice:'-3:' != 'pdf' %}display:none;{% endif %}">
+                                        {% if form.aadhar.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.aadhar.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <small class="form-text text-muted">
+                                            JPG, PNG or PDF format, max 5MB.
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Educational Marksheet</h5>
+                                </div>
+                                <div class="card-body">
+                                    {% if existing_documents.marksheet %}
+                                        <div class="text-center mb-3">
+                                            {% if existing_documents.marksheet.file.url|slice:"-3:" == "pdf" %}
+                                                <div class="document-icon">
+                                                    <i class="fas fa-file-pdf fa-4x text-danger"></i>
+                                                </div>
+                                                <p class="mt-2">
+                                                    <a href="{{ existing_documents.marksheet.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-eye me-1"></i>View PDF
+                                                    </a>
+                                                </p>
+                                            {% else %}
+                                                <img src="{{ existing_documents.marksheet.file.url }}" class="img-fluid img-thumbnail" 
+                                                     alt="Uploaded Marksheet" style="max-height: 150px;">
+                                            {% endif %}
+                                        </div>
+                                        <p class="text-success mb-3">
+                                            <i class="fas fa-check-circle me-2"></i>Uploaded on 
+                                            {{ existing_documents.marksheet.uploaded_at|date:"M d, Y" }}
+                                        </p>
+                                    {% endif %}
+                                    
+                                    <div class="file-upload-container">
+                                        <input type="file" class="form-control" id="marksheet" name="marksheet" 
+                                               accept="image/jpeg,image/png,application/pdf">
+                                        <img id="marksheet-preview" src="{% if existing_documents.marksheet and existing_documents.marksheet.file.url|slice:'-3:' != 'pdf' %}{{ existing_documents.marksheet.file.url }}{% endif %}" 
+                                             alt="Marksheet Preview" class="img-fluid img-thumbnail mt-3" style="max-height: 150px; {% if not existing_documents.marksheet or existing_documents.marksheet.file.url|slice:'-3:' == 'pdf' %}display:none;{% endif %}">
+                                        <embed id="marksheet-pdf-preview" src="{% if existing_documents.marksheet and existing_documents.marksheet.file.url|slice:'-3:' == 'pdf' %}{{ existing_documents.marksheet.file.url }}{% endif %}" 
+                                               type="application/pdf" class="mt-3" style="width: 100%; height: 300px; {% if not existing_documents.marksheet or existing_documents.marksheet.file.url|slice:'-3:' != 'pdf' %}display:none;{% endif %}">
+                                        {% if form.marksheet.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.marksheet.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <small class="form-text text-muted">
+                                            JPG, PNG or PDF format, max 5MB.
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="{% url 'education_info' application.id %}" class="btn btn-outline-secondary me-md-2">
+                            <i class="fas fa-arrow-left me-2"></i>Back
+                        </a>
+                        <button type="submit" class="btn btn-secondary me-2" name="save">Save</button>
+                        <button type="submit" class="btn btn-primary" name="save_continue">
+                            <i class="fas fa-save me-2"></i>Save & Continue
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .document-icon {
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        display: inline-block;
+    }
+    
+    .file-upload-container {
+        border: 2px dashed #dee2e6;
+        padding: 15px;
+        border-radius: 5px;
+        background-color: #f8f9fa;
+        transition: all 0.3s;
+    }
+    
+    .file-upload-container:hover {
+        border-color: var(--primary-color);
+    }
+</style>
+                         
+                         
+ 
+{% endblock %}

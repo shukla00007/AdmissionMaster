@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}Select Application Type - Admission Portal{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card fade-in">
+            <div class="card-header">
+                <h4 class="mb-0">Select Application Type</h4>
+            </div>
+            <div class="card-body p-4">
+                <p class="mb-4">Please select the type of program you wish to apply for:</p>
+                
+<form method="post" class="needs-validation">
+    {% csrf_token %}
+    
+    <div class="mb-4">
+        {% for choice in form.application_type %}
+            <div class="card mb-3 application-option" onclick="selectOption(this, '{{ choice.data_value }}')">
+                <div class="card-body">
+                    <div class="form-check">
+                        {{ choice.tag }}
+                        <label class="form-check-label" for="{{ choice.id_for_label }}">
+                            <strong>{{ choice.choice_label }}</strong>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        
+        {% if form.application_type.errors %}
+            <div class="invalid-feedback d-block">
+                {% for error in form.application_type.errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-primary btn-lg">
+            <i class="fas fa-check-circle me-2"></i>Continue
+        </button>
+        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+        </a>
+    </div>
+</form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+    .application-option {
+        cursor: pointer;
+        transition: all 0.3s;
+        border: 2px solid transparent;
+    }
+    
+    .application-option:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .application-option.selected {
+        border-color: var(--primary-color);
+        background-color: rgba(33, 150, 243, 0.05);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function selectOption(element, value) {
+        // Remove selected class from all options
+        document.querySelectorAll('.application-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+        
+        // Add selected class to clicked option
+        element.classList.add('selected');
+        
+        // Select the radio button
+        const radioInput = element.querySelector('input[type="radio"]');
+        radioInput.checked = true;
+        
+        // Trigger change event for validation
+        radioInput.dispatchEvent(new Event('change'));
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if a radio is already selected (e.g., when form is submitted with errors)
+        const selectedRadio = document.querySelector('input[name="application_type"]:checked');
+        if (selectedRadio) {
+            const parentCard = selectedRadio.closest('.application-option');
+            if (parentCard) {
+                parentCard.classList.add('selected');
+            }
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

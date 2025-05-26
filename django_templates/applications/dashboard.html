@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Admission Portal{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4 fade-in">
+            <div class="card-header">
+                <h4 class="mb-0">Welcome, {{ user.username }}</h4>
+            </div>
+            <div class="card-body">
+                <p class="lead">Manage your applications and track their status from your personalized dashboard.</p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    <a href="{% url 'select_application' %}" class="btn btn-primary">
+                        <i class="fas fa-plus-circle me-2"></i>Start New Application
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="col-12">
+        <div class="card fade-in">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Your Applications</h5>
+            </div>
+            <div class="card-body">
+                {% if applications %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Application #</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Submitted</th>
+                                    <th>Completion</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for application in applications %}
+                                    {% with completion_status=application.get_completion_status %}
+                                    <tr>
+                                        <td>{{ application.application_number|default:"Draft" }}</td>
+                                        <td>
+                                            <span class="badge bg-primary">{{ application.get_application_type_display }}</span>
+                                        </td>
+                                        <td>
+                                            {% if application.status == 'draft' %}
+                                                <span class="badge bg-secondary">In Progress</span>
+                                            {% elif application.status == 'submitted' %}
+                                                <span class="badge bg-info">Submitted</span>
+                                            {% elif application.status == 'under_review' %}
+                                                <span class="badge bg-warning">Under Review</span>
+                                            {% elif application.status == 'approved' %}
+                                                <span class="badge bg-success">Approved</span>
+                                            {% elif application.status == 'rejected' %}
+                                                <span class="badge bg-danger">Rejected</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ application.submitted_at|date:"M d, Y"|default:"Not submitted" }}</td>
+                                        <td>
+                                            <div class="progress" style="height: 5px;">
+                                                <div class="progress-bar" role="progressbar" 
+                                                     style="width: {{ completion_status.completion_percentage }}%;" 
+                                                     aria-valuenow="{{ completion_status.completion_percentage }}" 
+                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            <small class="text-muted">{{ completion_status.completion_percentage|floatformat:0 }}% complete</small>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                {% if application.status == 'draft' %}
+                                                    {% if completion_status.personal %}
+                                                        {% if completion_status.education %}
+                                                            {% if completion_status.documents %}
+                                                                <a href="{% url 'preview_application' application.id %}" class="btn btn-sm btn-primary">
+                                                                    <i class="fas fa-eye me-1"></i>Preview
+                                                                </a>
+                                                            {% else %}
+                                                                <a href="{% url 'documents_upload' application.id %}" class="btn btn-sm btn-primary">
+                                                                    <i class="fas fa-upload me-1"></i>Upload Docs
+                                                                </a>
+                                                            {% endif %}
+                                                        {% else %}
+                                                            <a href="{% url 'education_info' application.id %}" class="btn btn-sm btn-primary">
+                                                                <i class="fas fa-graduation-cap me-1"></i>Education
+                                                            </a>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <a href="{% url 'personal_info' application.id %}" class="btn btn-sm btn-primary">
+                                                            <i class="fas fa-user me-1"></i>Personal Info
+                                                        </a>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <a href="{% url 'download_application' application.id %}" class="btn btn-sm btn-success">
+                                                        <i class="fas fa-download me-1"></i>Download
+                                                    </a>
+                                                {% endif %}
+                                                <a href="{% url 'preview_application' application.id %}" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-eye me-1"></i>View
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endwith %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-file-alt fa-4x text-muted mb-3"></i>
+                        <h5>No applications yet</h5>
+                        <p>Start your first application by clicking the button below.</p>
+                        <a href="{% url 'select_application' %}" class="btn btn-primary mt-2">
+                            <i class="fas fa-plus-circle me-2"></i>Start Application
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if applications %}
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card fade-in">
+            <div class="card-header">
+                <h5 class="mb-0">Application Status Overview</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-4">
+                        <div class="p-3">
+                            <h3 class="mb-0">{{ applications|length }}</h3>
+                            <p class="text-muted mb-0">Total</p>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-3">
+{% comment %} The 'rejectattr' filter is not available in Django templates by default. We will replace this with a custom filter or use a workaround in the view. For now, replace with a simple count of applications with status 'draft' in the view context. {% endcomment %}
+{{ draft_applications_count }}
+                            <p class="text-muted mb-0">In Progress</p>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-3">
+{{ submitted_applications_count }}
+                            <p class="text-muted mb-0">Submitted</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card fade-in">
+            <div class="card-header">
+                <h5 class="mb-0">Quick Links</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    <a href="{% url 'select_application' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-plus-circle me-2"></i>Start New Application
+                    </a>
+                    <a href="{% url 'check_status' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-search me-2"></i>Check Application Status
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="fas fa-question-circle me-2"></i>Help & Support
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

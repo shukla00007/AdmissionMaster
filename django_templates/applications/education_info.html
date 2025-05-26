@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block title %}Education Information - Admission Portal{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card fade-in">
+            <div class="card-header">
+                <h4 class="mb-0">Application Progress</h4>
+            </div>
+            <div class="card-body">
+                <div class="step-indicator">
+                    <div class="step completed" id="stepPersonal">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Personal Information</div>
+                    </div>
+                    <div class="step active" id="stepEducation">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Education Background</div>
+                    </div>
+                    <div class="step" id="stepDocuments">
+                        <div class="step-number">3</div>
+                        <div class="step-label">Documents</div>
+                    </div>
+                    <div class="step" id="stepReview">
+                        <div class="step-number">4</div>
+                        <div class="step-label">Review & Submit</div>
+                    </div>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress">
+                        <div class="progress-bar" id="applicationProgress" role="progressbar" style="width: 50%;" 
+                             aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%</div>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <p class="mb-0"><strong>Application Type:</strong> {{ application.get_application_type_display }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card fade-in">
+            <div class="card-header">
+                <h4 class="mb-0">Education Information</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="highest_qualification" class="form-label">Highest Qualification</label>
+                        <select class="form-select" id="highest_qualification" name="highest_qualification" required>
+                            <option value="" {% if not form.highest_qualification.value %}selected{% endif %}>Select qualification</option>
+                            <option value="10th" {% if form.highest_qualification.value == '10th' %}selected{% endif %}>10th Standard</option>
+                            <option value="12th" {% if form.highest_qualification.value == '12th' %}selected{% endif %}>12th Standard</option>
+                            <option value="bachelor" {% if form.highest_qualification.value == 'bachelor' %}selected{% endif %}>Bachelor's Degree</option>
+                            <option value="master" {% if form.highest_qualification.value == 'master' %}selected{% endif %}>Master's Degree</option>
+                            <option value="phd" {% if form.highest_qualification.value == 'phd' %}selected{% endif %}>PhD</option>
+                            <option value="other" {% if form.highest_qualification.value == 'other' %}selected{% endif %}>Other</option>
+                        </select>
+                        {% if form.highest_qualification.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.highest_qualification.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="board_university" class="form-label">Board/University</label>
+                        <input type="text" class="form-control" id="board_university" name="board_university" required
+                              placeholder="Enter board or university name" value="{{ form.board_university.value|default:'' }}">
+                        {% if form.board_university.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.board_university.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="year_of_passing" class="form-label">Year of Passing</label>
+                            <input type="number" class="form-control" id="year_of_passing" name="year_of_passing" required
+                                  placeholder="Enter year" min="1950" max="{{ current_year }}" 
+                                  value="{{ form.year_of_passing.value|default:'' }}">
+                            {% if form.year_of_passing.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.year_of_passing.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="percentage_marks" class="form-label">Percentage/CGPA</label>
+                            <input type="number" class="form-control" id="percentage_marks" name="percentage_marks" required
+                                  placeholder="Enter percentage or CGPA" min="0" max="100" step="0.01"
+                                  value="{{ form.percentage_marks.value|default:'' }}">
+                            {% if form.percentage_marks.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.percentage_marks.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="{% url 'personal_info' application.id %}" class="btn btn-outline-secondary me-md-2">
+                            <i class="fas fa-arrow-left me-2"></i>Back
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Save & Continue
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
